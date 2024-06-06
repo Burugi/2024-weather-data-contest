@@ -68,8 +68,8 @@ def calculate_csi(y_true, y_pred):
     F12 = F13 = F21 = F23 = F31 = F32 = 0
     M14 = M24 = M34 = 0
     C44 = F41 = F42 = F43 = 0
-    y_true = y_true+1
-    y_pred = y_pred+1
+    # y_true = y_true+1
+    # y_pred = y_pred+1
     
     for true, pred in zip(y_true, y_pred):
         if true == 1:  # 0 < 시정 < 200
@@ -116,6 +116,30 @@ def calculate_csi(y_true, y_pred):
     CSI = H / (H + F + M)
     return CSI
 
+def classify_vis1(predictions):
+    """
+    Classify predicted fog_train.vis1 values into categories:
+    0 이상 200 미만: 1
+    200 이상 500 미만: 2
+    500 이상 1000 미만: 3
+    1000 이상: 4
+    
+    Parameters:
+    predictions (pd.Series or np.array): The predicted values of fog_train.vis1.
+    
+    Returns:
+    pd.Series: A new series with the classified categories.
+    """
+    conditions = [
+        (predictions >= 0) & (predictions < 200),
+        (predictions >= 200) & (predictions < 500),
+        (predictions >= 500) & (predictions < 1000),
+        (predictions >= 1000)
+    ]
+    
+    classes = [1, 2, 3, 4]
+    
+    return pd.Series(np.select(conditions, classes, default=np.nan), index=predictions.index)
 
 '''
 시각화
